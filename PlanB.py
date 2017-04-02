@@ -23,9 +23,6 @@ def text_reply(msg):
     global weuser
     global role
     global userlist
-    if msg['FromUserName'] not in userlist:
-        print('请先加入游戏。回复\"开始游戏\"')
-        return
     if msg['Content']=='开始游戏':
         if ifgame==False:
 #            sendmsg('加入成功，您的id:%s'%idnow,msg['FromUserName'])
@@ -64,6 +61,9 @@ def text_reply(msg):
         print(weuser)
         print(role)
         print(user)
+    if msg['FromUserName'] not in userlist:
+        print('请先加入游戏。回复\"开始游戏\"')
+        return
     #if各种控制模块
     if role[weuser[msg['FromUserName']]]='langren':
         #狼人发来的消息
