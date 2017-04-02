@@ -63,6 +63,7 @@ def text_reply(msg):
         print(user)
     if msg['FromUserName'] not in userlist:
         print('请先加入游戏。回复\"开始游戏\"')
+        itchat.send_msg('请先加入游戏。回复\"开始游戏\"\n--狼人杀Beta',msg['FromUserName'])
         return
     #if各种控制模块
     if role[weuser[msg['FromUserName']]]='langren':
