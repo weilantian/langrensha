@@ -18,14 +18,14 @@ def sendmsg(message,touser):
     itchat.send_msg('%s'%message,toUserName=touser)
 @itchat.msg_register([TEXT])
 def text_reply(msg):
-    if msg['FromUserName'] not in userlist:
-        print('请先加入游戏。回复\"开始游戏\"')
-        return
     global idnow
     global user
     global weuser
     global role
     global userlist
+    if msg['FromUserName'] not in userlist:
+        print('请先加入游戏。回复\"开始游戏\"')
+        return
     if msg['Content']=='开始游戏':
         if ifgame==False:
 #            sendmsg('加入成功，您的id:%s'%idnow,msg['FromUserName'])
