@@ -18,6 +18,9 @@ def sendmsg(message,touser):
     itchat.send_msg('%s'%message,toUserName=touser)
 @itchat.msg_register([TEXT])
 def text_reply(msg):
+    if msg['FromUserName'] not in userlist:
+        print('请先加入游戏。回复\"开始游戏\"')
+        return
     global idnow
     global user
     global weuser
@@ -62,6 +65,14 @@ def text_reply(msg):
         print(role)
         print(user)
     #if各种控制模块
+    if role[weuser[msg['FromUserName']]]='langren':
+        #狼人发来的消息
+    elif role[weuser[msg['FromUserName']]]='nvwu':
+        #女巫发来的消息，作消息处理
+    elif role[weuser[msg['FromUserName']]]='yuyanjia':
+        #预言家发来的消息，作消息处理
+    else:
+        #村民发来的消息
 def start():
     #global idnow
     global user
@@ -83,13 +94,24 @@ def toupiao(msg):
     print('%s' % msg['FromUserName'])
     if msg['FromUserName']==groupchatmain:#来自主群的消息
         #itchat.send_msg('ITCHATTest'+msg['Content'],toUserName=groupchatmain)
+        #其实没有什么必要
     elif msg['FromUserName']==groupchatlangren:#来自狼人的消息
         #itchat.send_msg('ITCHATTestLangren'+msg['Content',toUserName=groupchatlangren])
+        #数据处理，算出最后被杀
 def mainloop():
     global user
     global weuser
     global role
     global userlist
-    #大循环[天黑请闭眼--天亮请睁眼--下一次天黑请闭眼]    
+    #大循环[天黑请闭眼--天亮请睁眼--下一次天黑请闭眼]
+    #各种判断模块，判断谁被杀以及剧情发展
+    #最后如果女巫/预言家被杀，仍然要一个random的sleep
+    #如果所有非狼人/狼人被杀完，游戏结束进入ending，开始120秒倒计时然后强制踢出所有人
     mainloop()
+def ending():
+    global user
+    global weuser
+    global role
+    global userlist
+    #各种结果公布+倒计时踢人
 itchat.run()
