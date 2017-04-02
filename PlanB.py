@@ -62,9 +62,9 @@ def text_reply(msg):
         print(role)
         print(user)
     if msg['FromUserName'] not in userlist:
-        print('请先加入游戏。回复\"开始游戏\"')
-        itchat.send_msg('请先加入游戏。回复\"开始游戏\"\n--狼人杀Beta',msg['FromUserName'])
-        return
+            print('请先加入游戏。回复\"开始游戏\"')
+            itchat.send_msg('请先加入游戏。回复\"开始游戏\"\n--狼人杀Beta',msg['FromUserName'])
+            return
     #if各种控制模块
     if role[weuser[msg['FromUserName']]]='langren':
         #狼人发来的消息
@@ -95,7 +95,7 @@ def toupiao(msg):
     print('%s' % msg['FromUserName'])
     if msg['FromUserName']==groupchatmain:#来自主群的消息
         #itchat.send_msg('ITCHATTest'+msg['Content'],toUserName=groupchatmain)
-        #其实没有什么必要
+        #其实没有什么必要 最多防作弊，主群本来就是用来讨论的
     elif msg['FromUserName']==groupchatlangren:#来自狼人的消息
         #itchat.send_msg('ITCHATTestLangren'+msg['Content',toUserName=groupchatlangren])
         #数据处理，算出最后被杀
