@@ -66,11 +66,11 @@ def text_reply(msg):
             itchat.send_msg('请先加入游戏。回复\"开始游戏\"\n--狼人杀Beta',msg['FromUserName'])
             return
     #if各种控制模块
-    if role[weuser[msg['FromUserName']]]='langren':
+    if role[weuser[msg['FromUserName']]]=='langren':
         #狼人发来的消息
-    elif role[weuser[msg['FromUserName']]]='nvwu':
+    elif role[weuser[msg['FromUserName']]]=='nvwu':
         #女巫发来的消息，作消息处理
-    elif role[weuser[msg['FromUserName']]]='yuyanjia':
+    elif role[weuser[msg['FromUserName']]]=='yuyanjia':
         #预言家发来的消息，作消息处理
     else:
         #村民发来的消息
