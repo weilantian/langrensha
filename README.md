@@ -6,5 +6,9 @@ Python狼人杀游戏机器人。
 
 本项目基于[ItChat](https://github.com/littlecodersh/ItChat)开发。
 
+## 当前进度
+完成了Plan A的自动分配，但没有退出等功能
+
+完成Plan B的开始/退出/成员管理等功能
 ## 正在建设...
 敬请期待。。。
