@@ -6,8 +6,6 @@ import sys
 import time
 import random
 itchat.auto_login(hotReload=True)
-gameStatus = 0
-# 用于确认当前游戏状态 0 游戏准备 1 日常天黑 2 杀人投票......
 idnow=0
 ifgame=False
 user={}
@@ -69,12 +67,16 @@ def text_reply(msg):
             return
     #if各种控制模块
     if role[weuser[msg['FromUserName']]]=='langren':
+        print('langren says:%s'%msg['Content'])
         #狼人发来的消息
     elif role[weuser[msg['FromUserName']]]=='nvwu':
+        print('nvwu says:%s'%msg['Content'])
         #女巫发来的消息，作消息处理
     elif role[weuser[msg['FromUserName']]]=='yuyanjia':
+        print('Yuyanjia says:%s'%msg['Content'])
         #预言家发来的消息，作消息处理
     else:
+        print('Cunmin says:%s'%msg['Content'])
         #村民发来的消息
 def start():
     #global idnow
@@ -82,9 +84,44 @@ def start():
     global weuser
     global role
     global userlist
+    global groupchatlangren
+    global groupchatmain
     #初始化
     #包含分配角色 建群等
     #建群获得的id赋值给groupchatmain和groupchatlangren
+    groupchatmain=itchat.create_chatroom(userlist, '狼人杀Beta')
+    itchat.send_msg('欢迎加入狼人杀',toUserName=groupchatmain)
+    itchat.send_msg('现在游戏开始,系统将抽取每个人的身份，请留意私信！',toUserName=groupchatmain)
+    rolelist=userlist
+    for i in range(3):
+        rr=random.choice(rolelist)
+        rd=weuser[rr]
+        role[rd]='langren'
+        for x in range(len(rolelist)-1):
+            if rolelist[x]==rr:
+                rolelist.pop(x)
+                break
+    for i in range(1):
+        rr=random.choice(rolelist)
+        rd=weuser[rr]
+        role[rd]='nvwu'
+        for x in range(len(rolelist)-1):
+            if rolelist[x]==rr:
+                rolelist.pop(x)
+                break
+    for i in range(1):
+        rr=random.choice(rolelist)
+        rd=weuser[rr]
+        role[rd]='yuyanjia'
+        for x in range(len(rolelist)-1):
+            if rolelist[x]==rr:
+                rolelist.pop(x)
+                break
+    for i in range(len(rolelist)):
+        rr=random.choice(rolelist)
+        rd=weuser[rr]
+        role[rd]='cunmin'
+    rolelist=[]        
 @itchat.msg_register([TEXT],isGroupChat=True)
 #这里注册的消息是群聊回复状态
 def toupiao(msg):
@@ -98,9 +135,11 @@ def toupiao(msg):
     if msg['FromUserName']==groupchatmain:#来自主群的消息
         #itchat.send_msg('ITCHATTest'+msg['Content'],toUserName=groupchatmain)
         #其实没有什么必要 最多防作弊，主群本来就是用来讨论的
+        print('GroupChatMain:%s'%msg['Content'])
     elif msg['FromUserName']==groupchatlangren:#来自狼人的消息
         #itchat.send_msg('ITCHATTestLangren'+msg['Content',toUserName=groupchatlangren])
         #数据处理，算出最后被杀
+        print('GroupChatLangren:%s'%msg['Content'])
 def mainloop():
     global user
     global weuser
