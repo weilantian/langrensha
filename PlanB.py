@@ -1,5 +1,11 @@
 # -*- coding:utf-8 -*-
 #import os
+#userlist：格式 ['微信id','微信id',...]
+#role: 格式 {游戏id:'langren/nvwu/yuyanjia/cunmin',游戏id:'...'}
+#idnow： 游戏进入分配id使用
+#weuser： 格式{'微信id':'游戏id',...}
+#user: 格式{'游戏id':'微信id',...}
+#rolelist： 和userlist相同，临时dict，分配角色使用，使用完毕后通过遍历然后用pop删除
 import itchat
 from itchat.content import *
 import sys
@@ -36,7 +42,7 @@ def text_reply(msg):
                 print(user)
                 print(weuser)
                 idnow=idnow+1
-                if len(userlist)>=8:
+                if len(userlist)>=4:
                     #开始游戏
                     start()
     if msg['Content']=='退出游戏':
@@ -66,6 +72,7 @@ def text_reply(msg):
             itchat.send_msg('请先加入游戏。回复\"开始游戏\"\n--狼人杀Beta',msg['FromUserName'])
             return
     #if各种控制模块
+    print(role)
     if role[weuser[msg['FromUserName']]]=='langren':
         print('langren says:%s'%msg['Content'])
         #狼人发来的消息
@@ -93,7 +100,7 @@ def start():
     itchat.send_msg('欢迎加入狼人杀',toUserName=groupchatmain)
     itchat.send_msg('现在游戏开始,系统将抽取每个人的身份，请留意私信！',toUserName=groupchatmain)
     rolelist=userlist
-    for i in range(3):
+    for i in range(1):
         rr=random.choice(rolelist)
         rd=weuser[rr]
         role[rd]='langren'
@@ -121,7 +128,16 @@ def start():
         rr=random.choice(rolelist)
         rd=weuser[rr]
         role[rd]='cunmin'
-    rolelist=[]        
+    rolelist=[]
+    for z in userlist:
+        if role[userlist[z]]=='langren':
+            itchat.send_msg('您的身份是狼人',toUserName=userlist[z])
+        elif role[userlist[z]]=='nvwu':
+            itchat.send_msg('您的身份是女巫',toUserName=userlist[z])
+        elif role[userlist[z]]=='yuyanjia':
+            itchat.send_msg('您的身份是预言家',toUserName=userlist[z])
+        else:
+            itchat.send_msg('您的身份是村民',toUserName=userlist[z])
 @itchat.msg_register([TEXT],isGroupChat=True)
 #这里注册的消息是群聊回复状态
 def toupiao(msg):
