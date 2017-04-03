@@ -14,7 +14,7 @@ from itchat.content import *
 import sys
 import time
 import random
-itchat.auto_login(hotReload=True)
+import urllib
 idnow=0
 ifgame=False
 user={}
@@ -24,6 +24,14 @@ userlist=[]
 ifchosen=False
 groupchatmain=''
 groupchatlangren=''
+langren=[]
+cunmin=[]
+nvwu=''
+yuyanjia=''
+roles=['langren','nvwu','yuyanjia','cunmin']
+langrenamout=1
+cunminamout=1
+itchat.auto_login(hotReload=True)
 def sendmsg(message,touser):
     itchat.send_msg('%s'%message,toUserName=touser)
 @itchat.msg_register([TEXT])
@@ -33,6 +41,7 @@ def text_reply(msg):
     global weuser
     global role
     global userlist
+    global ifchosen
     global ifgame
     if msg['Content']=='开始游戏':
         if ifgame==False:
@@ -47,7 +56,7 @@ def text_reply(msg):
                 print(user)
                 print(weuser)
                 idnow=idnow+1
-                if len(userlist)>=4:
+                if len(userlist)>=2+langrenamout+cunminamout:
                     #开始游戏
                     start()
         else:
@@ -99,10 +108,17 @@ def start():
     global user
     global weuser
     global role
+    global roles
     global userlist
     global groupchatlangren
     global groupchatmain
     global ifgame
+    global langrenamout
+    global cunminamout
+    global yuyanjia
+    global cunmin
+    global langren
+    global nvwu
     ifgame=True
     #初始化
     #包含分配角色 建群等
@@ -116,45 +132,56 @@ def start():
     groupchatmain=gctmp['ChatRoomName']
     itchat.send_msg('欢迎加入狼人杀',toUserName=groupchatmain)
     itchat.send_msg('现在游戏开始,系统将抽取每个人的身份，请留意私信！',toUserName=groupchatmain)
-    rolelist=userlist
-    for i in range(1):
-        rr=random.choice(rolelist)
-        rd=weuser[rr]
-        role[rd]='langren'
-        for x in range(len(rolelist)-1):
-            if rolelist[x]==rr:
-                rolelist.pop(x)
-                break
-    for i in range(1):
-        rr=random.choice(rolelist)
-        rd=weuser[rr]
-        role[rd]='nvwu'
-        for x in range(len(rolelist)-1):
-            if rolelist[x]==rr:
-                rolelist.pop(x)
-                break
-    for i in range(1):
-        rr=random.choice(rolelist)
-        rd=weuser[rr]
-        role[rd]='yuyanjia'
-        for x in range(len(rolelist)-1):
-            if rolelist[x]==rr:
-                rolelist.pop(x)
-                break
-    for i in range(len(rolelist)):
-        rr=random.choice(rolelist)
-        rd=weuser[rr]
-        role[rd]='cunmin'
-    rolelist=[]
-    for z in userlist:
-        if role[userlist[z]]=='langren':
-            itchat.send_msg('您的身份是狼人',toUserName=userlist[z])
-        elif role[userlist[z]]=='nvwu':
-            itchat.send_msg('您的身份是女巫',toUserName=userlist[z])
-        elif role[userlist[z]]=='yuyanjia':
-            itchat.send_msg('您的身份是预言家',toUserName=userlist[z])
-        else:
-            itchat.send_msg('您的身份是村民',toUserName=userlist[z])
+    for rolex in userlist:
+        rolext=random.choice(roles)
+        if rolext=='langren':
+            if len(langren)>=langrenamout:
+                for x in range(len(roles)):
+                    if roles[x]=='langren':
+                        roles.pop(x)
+                        break
+                rolext=random.choice(roles)
+        if rolext=='cunmin':
+            if len(langren)>=cunminamout:
+                for x in range(len(roles)):
+                    if roles[x]=='cunmin':
+                        roles.pop(x)
+                        break
+                rolext=random.choice(roles)              
+        if rolext=='nvwu':
+            if nvwu!='':
+                for x in range(len(roles)):
+                    if roles[x]=='nvwu':
+                        roles.pop(x)
+                        break
+                rolext=random.choice(roles)
+        if rolext=='yuyanjia':
+            if yuyanjia!='':
+                for x in range(len(roles)):
+                    if roles[x]=='yuyanjia':
+                        roles.pop(x)
+                        break
+                rolext=random.choice(roles)
+        role[weuser[rolex]]=rolext
+        print(weuser[rolex])
+        print(roles)
+        print(role)
+        print(rolex)
+        print(rolext)
+        if rolext=='langren':
+            langren.append(weuser[rolex])
+            itchat.send_msg('您的身份是狼人，稍后将进入狼人专用群。',toUserName=rolex)
+        if rolext=='cunmin':
+            cunmin.append(weuser[rolex])
+            itchat.send_msg('您的身份是村民',toUserName=rolex)
+        if rolext=='nvwu':
+            nvwu=weuser[rolex]
+            itchat.send_msg('您的身份是女巫，您有以下技能\n在提示时输入用户id，然后输入救/杀，如：',toUserName=rolex)
+            itchat.send_msg('1',toUserName=rolex)
+            itchat.send_msg('救',toUserName=rolex)
+        if rolext=='yuyanjia':
+            yuyanjia=weuser[rolex]
+            itchat.send_msg('您的身份是预言家，您有一下技能\n在提示时输入用户id',toUserName=rolex)
     ifchosen=True
     print('Out=role')
     print(role)
