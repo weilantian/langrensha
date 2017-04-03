@@ -1,11 +1,14 @@
 # -*- coding:utf-8 -*-
-#import os
+#Producer:Xiaolan,Yyj
+#Github Link:https://github.com/weilantian/langrensha
+#变量注释：
 #userlist：格式 ['微信id','微信id',...]
 #role: 格式 {游戏id:'langren/nvwu/yuyanjia/cunmin',游戏id:'...'}
 #idnow： 游戏进入分配id使用
 #weuser： 格式{'微信id':'游戏id',...}
 #user: 格式{'游戏id':'微信id',...}
 #rolelist： 和userlist相同，临时dict，分配角色使用，使用完毕后通过遍历然后用pop删除
+import os
 import itchat
 from itchat.content import *
 import sys
@@ -19,8 +22,8 @@ weuser={}
 role={}
 userlist=[]
 ifchosen=False
-groupchatmain='@@ed283c62a59ccea2029e7f4a9b6331edbd47ae304f5869d1281224528103d6c6'#测试用
-groupchatlangren='@@ed283c62a59ccea2029e7f4a9b6331edbd47ae304f5869d1281224528103d6c6'#测试用
+groupchatmain=''
+groupchatlangren=''
 def sendmsg(message,touser):
     itchat.send_msg('%s'%message,toUserName=touser)
 @itchat.msg_register([TEXT])
@@ -163,8 +166,8 @@ def toupiao(msg):
     global weuser
     global role
     global userlist
-    print('%s' % msg['Content'])
-    print('%s' % msg['FromUserName'])
+    #print('%s' % msg['Content'])
+    #print('%s' % msg['FromUserName'])
     if msg['FromUserName']==groupchatmain:#来自主群的消息
         #itchat.send_msg('ITCHATTest'+msg['Content'],toUserName=groupchatmain)
         #其实没有什么必要 最多防作弊，主群本来就是用来讨论的
