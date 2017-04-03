@@ -6,6 +6,8 @@ import sys
 import time
 import random
 itchat.auto_login(hotReload=True)
+gameStatus = 0
+# 用于确认当前游戏状态 0 游戏准备 1 日常天黑 2 杀人投票......
 idnow=0
 ifgame=False
 user={}
