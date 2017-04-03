@@ -18,6 +18,7 @@ user={}
 weuser={}
 role={}
 userlist=[]
+ifchosen=False
 groupchatmain='@@ed283c62a59ccea2029e7f4a9b6331edbd47ae304f5869d1281224528103d6c6'#测试用
 groupchatlangren='@@ed283c62a59ccea2029e7f4a9b6331edbd47ae304f5869d1281224528103d6c6'#测试用
 def sendmsg(message,touser):
@@ -29,6 +30,7 @@ def text_reply(msg):
     global weuser
     global role
     global userlist
+    global ifgame
     if msg['Content']=='开始游戏':
         if ifgame==False:
 #            sendmsg('加入成功，您的id:%s'%idnow,msg['FromUserName'])
@@ -45,6 +47,8 @@ def text_reply(msg):
                 if len(userlist)>=4:
                     #开始游戏
                     start()
+        else:
+            itchat.send_msg("游戏已开始，请稍后再试",toUserName=msg['FromUserName'])
     if msg['Content']=='退出游戏':
         k=weuser.get(msg['FromUserName'],-1)
         if k!=-1:
@@ -73,6 +77,8 @@ def text_reply(msg):
             return
     #if各种控制模块
     print(role)
+    if ifchosen==False:
+        return
     if role[weuser[msg['FromUserName']]]=='langren':
         print('langren says:%s'%msg['Content'])
         #狼人发来的消息
@@ -93,10 +99,18 @@ def start():
     global userlist
     global groupchatlangren
     global groupchatmain
+    global ifgame
+    ifgame=True
     #初始化
     #包含分配角色 建群等
     #建群获得的id赋值给groupchatmain和groupchatlangren
-    groupchatmain=itchat.create_chatroom(userlist, '狼人杀Beta')
+    print('Out=Userlist')
+    print(userlist)
+    userDict = []
+    for uuserlist in userlist :
+        userDict.append({"UserName":uuserlist})
+    gctmp=itchat.create_chatroom(userDict, '狼人杀Beta')
+    groupchatmain=gctmp['ChatRoomName']
     itchat.send_msg('欢迎加入狼人杀',toUserName=groupchatmain)
     itchat.send_msg('现在游戏开始,系统将抽取每个人的身份，请留意私信！',toUserName=groupchatmain)
     rolelist=userlist
@@ -138,6 +152,9 @@ def start():
             itchat.send_msg('您的身份是预言家',toUserName=userlist[z])
         else:
             itchat.send_msg('您的身份是村民',toUserName=userlist[z])
+    ifchosen=True
+    print('Out=role')
+    print(role)
 @itchat.msg_register([TEXT],isGroupChat=True)
 #这里注册的消息是群聊回复状态
 def toupiao(msg):
