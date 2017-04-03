@@ -29,8 +29,8 @@ cunmin=[]
 nvwu=''
 yuyanjia=''
 roles=['langren','nvwu','yuyanjia','cunmin']
-langrenamout=1
-cunminamout=1
+langrenamout=2
+cunminamout=0
 itchat.auto_login(hotReload=True)
 def sendmsg(message,touser):
     itchat.send_msg('%s'%message,toUserName=touser)
@@ -104,7 +104,7 @@ def text_reply(msg):
         print('Cunmin says:%s'%msg['Content'])
         #村民发来的消息
 def start():
-    #global idnow
+    global idnow
     global user
     global weuser
     global role
@@ -132,6 +132,7 @@ def start():
     groupchatmain=gctmp['ChatRoomName']
     itchat.send_msg('欢迎加入狼人杀',toUserName=groupchatmain)
     itchat.send_msg('现在游戏开始,系统将抽取每个人的身份，请留意私信！',toUserName=groupchatmain)
+    userDict=[]
     for rolex in userlist:
         rolext=random.choice(roles)
         if rolext=='langren':
@@ -181,29 +182,19 @@ def start():
             itchat.send_msg('救',toUserName=rolex)
         if rolext=='yuyanjia':
             yuyanjia=weuser[rolex]
-            itchat.send_msg('您的身份是预言家，您有一下技能\n在提示时输入用户id',toUserName=rolex)
+            itchat.send_msg('您的身份是预言家，您有以下技能\n在提示时输入用户id，查看用户身份',toUserName=rolex)
     ifchosen=True
-    print('Out=role')
-    print(role)
+    itchat.send_msg('身份发送完毕，现在开始游戏。',toUserName=groupchatmain)
+    for ux in langren:
+        userDict.append({"UserName":user[ux]})
+    gctmp=itchat.create_chatroom(userDict, '狼人群-狼人杀Beta')
+    groupchatlangren=gctmp['ChatRoomName']
+    print(gctmp)
+    print('狼人群 id%s'%groupchatlangren)
+    itchat.send_msg('欢迎来到狼人群。',toUserName=groupchatlangren)
+    ending('狼人')
 @itchat.msg_register([TEXT],isGroupChat=True)
-#这里注册的消息是群聊回复状态
-def toupiao(msg):
-    #global idnow
-    global user
-    global weuser
-    global role
-    global userlist
-    #print('%s' % msg['Content'])
-    #print('%s' % msg['FromUserName'])
-    if msg['FromUserName']==groupchatmain:#来自主群的消息
-        #itchat.send_msg('ITCHATTest'+msg['Content'],toUserName=groupchatmain)
-        #其实没有什么必要 最多防作弊，主群本来就是用来讨论的
-        print('GroupChatMain:%s'%msg['Content'])
-    elif msg['FromUserName']==groupchatlangren:#来自狼人的消息
-        #itchat.send_msg('ITCHATTestLangren'+msg['Content',toUserName=groupchatlangren])
-        #数据处理，算出最后被杀
-        print('GroupChatLangren:%s'%msg['Content'])
-def mainloop():
+def mainloop(msg):
     global user
     global weuser
     global role
@@ -213,10 +204,39 @@ def mainloop():
     #最后如果女巫/预言家被杀，仍然要一个random的sleep
     #如果所有非狼人/狼人被杀完，游戏结束进入ending，开始120秒倒计时然后强制踢出所有人
     mainloop()
-def ending():
+def ending(winner):
     global user
     global weuser
     global role
     global userlist
+    global groupchatlangren
+    global groupchatmain
+    itchat.send_msg('游戏结束。获胜者：%s\n已开放新局。'%winner,toUserName=groupchatmain)
+    itchat.send_msg('游戏结束。获胜者：%s\n已开放新局。'%winner,toUserName=groupchatlangren)
+    userDict = []
+    #初始化
+    global idnow
+    global roles
+    global ifgame
+    global langrenamout
+    global cunminamout
+    global yuyanjia
+    global cunmin
+    global langren
+    global nvwu
+    idnow=0
+    ifgame=False
+    user={}
+    weuser={}
+    role={}
+    userlist=[]
+    ifchosen=False
+    groupchatmain=''
+    groupchatlangren=''
+    langren=[]
+    cunmin=[]
+    nvwu=''
+    yuyanjia=''
+    roles=['langren','nvwu','yuyanjia','cunmin']
     #各种结果公布+倒计时踢人
 itchat.run()
