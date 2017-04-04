@@ -25,12 +25,14 @@ ifchosen=False
 groupchatmain=''
 groupchatlangren=''
 langren=[]
+z=''
 cunmin=[]
 nvwu=''
 yuyanjia=''
 roles=['langren','nvwu','yuyanjia','cunmin']
-langrenamout=2
+langrenamout=1
 cunminamout=0
+friendnc={}
 itchat.auto_login(hotReload=True)
 def sendmsg(message,touser):
     itchat.send_msg('%s'%message,toUserName=touser)
@@ -119,6 +121,7 @@ def start():
     global cunmin
     global langren
     global nvwu
+    global friendnc
     ifgame=True
     #初始化
     #包含分配角色 建群等
@@ -131,7 +134,11 @@ def start():
     gctmp=itchat.create_chatroom(userDict, '狼人杀Beta')
     groupchatmain=gctmp['ChatRoomName']
     itchat.send_msg('欢迎加入狼人杀',toUserName=groupchatmain)
-    itchat.send_msg('现在游戏开始,系统将抽取每个人的身份，请留意私信！',toUserName=groupchatmain)
+    itchat.send_msg('请稍后，正在获取昵称...',toUserName=groupchatmain)
+    for x in userlist:
+        y=itchat.search_friends(userName=x)
+        friendnc[weuser[x]]=y['NickName']
+    itchat.send_msg('系统将抽取每个人的身份，请留意私信！',toUserName=groupchatmain)
     userDict=[]
     for rolex in userlist:
         rolext=random.choice(roles)
@@ -192,17 +199,24 @@ def start():
     print(gctmp)
     print('狼人群 id%s'%groupchatlangren)
     itchat.send_msg('欢迎来到狼人群。',toUserName=groupchatlangren)
-    ending('狼人')
+    mainloop()
 @itchat.msg_register([TEXT],isGroupChat=True)
-def mainloop(msg):
+def wechat(msg):
+    print(msg['Content'])
+def mainloop():
     global user
     global weuser
     global role
+    global z
     global userlist
     #大循环[天黑请闭眼--天亮请睁眼--下一次天黑请闭眼]
     #各种判断模块，判断谁被杀以及剧情发展
     #最后如果女巫/预言家被杀，仍然要一个random的sleep
     #如果所有非狼人/狼人被杀完，游戏结束进入ending，开始120秒倒计时然后强制踢出所有人
+
+    print(friendnc)
+    itchat.send_msg('天黑请闭眼',toUserName=groupchatmain)
+    itchat.send_msg('请讨论，选出想杀的人，排一个代表私聊回复id号',toUserName=groupchatlangren)
     mainloop()
 def ending(winner):
     global user
@@ -211,8 +225,8 @@ def ending(winner):
     global userlist
     global groupchatlangren
     global groupchatmain
-    itchat.send_msg('游戏结束。获胜者：%s\n已开放新局。'%winner,toUserName=groupchatmain)
-    itchat.send_msg('游戏结束。获胜者：%s\n已开放新局。'%winner,toUserName=groupchatlangren)
+    itchat.send_msg('游戏结束。获胜者：%s\n请自行删除并退出。'%winner,toUserName=groupchatmain)
+    itchat.send_msg('游戏结束。获胜者：%s\n请自行删除并退出。'%winner,toUserName=groupchatlangren)
     userDict = []
     #初始化
     global idnow
