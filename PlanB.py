@@ -14,7 +14,6 @@ from itchat.content import *
 import sys
 import time
 import random
-import urllib
 idnow=0
 ifgame=False
 user={}
@@ -34,10 +33,11 @@ wefriendnc={}
 toupiao=[]
 cunmin=[]
 nvwu=''
+x=0
 die=''
 yuyanjia=''
 roles=['langren','nvwu','yuyanjia','cunmin']
-langrenamout=2
+langrenamout=1
 cunminamout=0
 friendnc={}
 itchat.auto_login(hotReload=True)
@@ -47,8 +47,10 @@ def text_reply(msg):
     global user
     global weuser
     global role
+    global x
     global userlist
     global nvwuwait
+    global wait
     global dead
     global ifchosen
     global save
@@ -109,7 +111,10 @@ def text_reply(msg):
             toupiao.append(msg['Content'])
     if role[weuser[msg['FromUserName']]]=='langren':
         print('langren says:%s'%msg['Content'])
-        if msg['Content'] not in user:
+        print (weuser)
+        print (user)
+        print(msg['Content'])
+        if user.get(msg['Content'],-1)==-1:
             itchat.send_msg('对方不存在。',toUserName=msg['FromUserName'])
         elif msg['Content'] in dead:
             itchat.send_msg('对方已死，请重新选择',toUserName=msg['FromUserName'])
@@ -141,7 +146,7 @@ def text_reply(msg):
                     wait=''
                     save=msg['Content']
                 nvwugoon()
-        if msg['Content'] not in user:
+        if user.get(msg['Content'],-1)==-1:
             itchat.send_msg('对方不存在。',toUserName=msg['FromUserName'])
         elif wait!='nvwu':
             itchat.send_msg('您现在不能杀人或救人。',toUserName=msg['FromUserName'])
@@ -179,6 +184,7 @@ def start():
     global cunmin
     global langren
     global nvwu
+    global x
     global ifchosen
     global friendnc
     ifgame=True
@@ -209,8 +215,10 @@ def start():
                         roles.pop(x)
                         break
                 rolext=random.choice(roles)
+                print('******')
+                print(roles)
         if rolext=='cunmin':
-            if len(langren)>=cunminamout:
+            if len(cunmin)>=cunminamout:
                 for x in range(len(roles)):
                     if roles[x]=='cunmin':
                         roles.pop(x)
@@ -275,10 +283,12 @@ def mainloop():
     #各种判断模块，判断谁被杀以及剧情发展
     #最后如果女巫/预言家被杀，仍然要一个random的sleep
     #如果所有非狼人/狼人被杀完，游戏结束进入ending，开始120秒倒计时然后强制踢出所有人
+    print(wefriendnc)
     for x in friendnc:
-        itchat.send_msg('%s的id:%s',toUserName=groupchatmain)%wefriendnc[x],x
-        itchat.send_msg('%s的id:%s',toUserName=groupchatlangren)%wefriendnc[x],x
-    itchat.send_msg('天黑请闭眼',toUserName=groupchatmain)
+        print(x)
+        itchat.send_msg(str(x)+"是"+friendnc[x],toUserName=groupchatmain)
+        itchat.send_msg(str(x)+'是'+friendnc[x],toUserName=groupchatlangren)
+    itchat.send_msg('天黑请闭眼，狼人请睁眼',toUserName=groupchatmain)
     itchat.send_msg('请讨论，选出想杀的人，派一个代表私聊回复id号',toUserName=groupchatlangren)
     wait=langren
 def ending(winner):
