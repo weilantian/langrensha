@@ -37,8 +37,8 @@ x=0
 die=''
 yuyanjia=''
 roles=['langren','nvwu','yuyanjia','cunmin']
-langrenamout=1
-cunminamout=0
+langrenamout=3
+cunminamout=3
 friendnc={}
 itchat.auto_login(hotReload=True)
 @itchat.msg_register([TEXT])
