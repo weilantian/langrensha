@@ -17,6 +17,7 @@ import random
 idnow=0
 ifgame=False
 user={}
+toupiaoed=[]
 weuser={}
 role={}
 userlist=[]
@@ -50,6 +51,7 @@ def text_reply(msg):
     global x
     global userlist
     global nvwuwait
+    global toupiaoed
     global wait
     global dead
     global ifchosen
@@ -106,14 +108,21 @@ def text_reply(msg):
     if ifchosen==False:
         return
     if wait=='toupiao':
-        if msg['FromUserName'] not in dead:
+        if int(weuser[msg['FromUserName']]) not in dead:
+            if msg['FromUserName'] in toupiaoed==True:
+                itchat.send_msg('您已投过票',toUserName=msg['FromUserName'])
+                return
             itchat.send_msg('投票成功。',toUserName=msg['FromUserName'])
+            toupiaoed.append(msg['FromUserName'])
             toupiao.append(msg['Content'])
     if role[weuser[msg['FromUserName']]]=='langren':
         print('langren says:%s'%msg['Content'])
         print (weuser)
         print (user)
         print(msg['Content'])
+        if int(msg[weuser['FromUserName']]) in dead:
+            itchat.send_msg('您已死，不能发言和杀人',toUserName=msg['FromUserName'])
+            return
         if int(msg['Content']) in user==False:
             itchat.send_msg('对方不存在。',toUserName=msg['FromUserName'])
         elif int(msg['Content']) in dead:
@@ -146,6 +155,9 @@ def text_reply(msg):
                     wait=''
                     save=msg['Content']
                 nvwugoon()
+            if int(weuser[msg['FromUserName']]) in dead:
+                itchat.send_msg('您已死，不能发言和杀人和救人',toUserName=msg['FromUserName'])
+            return
             if int(msg['Content']) in user==False:
                 itchat.send_msg('对方不存在。',toUserName=msg['FromUserName'])
             elif wait!='nvwu':
@@ -153,9 +165,14 @@ def text_reply(msg):
             elif int(msg['Content']) in dead:
                 itchat.send_msg('对方已死，请选择救/不救',toUserName=msg['FromUserName'])
                 nvwuwait=msg['Content']
+        else:
+            itchat.send_msg('您现在不能杀人和救人。')
         #女巫发来的消息，作消息处理
     elif role[weuser[msg['FromUserName']]]=='yuyanjia':
         print('Yuyanjia says:%s'%msg['Content'])
+        if int(weuser[msg['FromUserName']]) in dead:
+            itchat.send_msg('您已死，不能查询.',toUserName=msg['FromUserName'])
+            return
         if wait=='yuyanjia':
             if int(msg['Content']) in user ==False:
                 itchat.send_msg('id不存在，请重新输入',toUserName=msg['FromUserName'])
@@ -163,6 +180,8 @@ def text_reply(msg):
             itchat.send_msg('%s'%role[msg['Content']])
             wait=''
             yuyanjiagoon()
+        else:
+            itchat.send_msg('您现在不能查询。')
         #预言家发来的消息，作消息处理
     else:
         print('Cunmin says:%s'%msg['Content'])
@@ -328,13 +347,21 @@ def ending(winner):
     #各种结果公布+倒计时踢人
 def goon():
     itchat.send_msg('狼人发言完毕，请狼人闭眼，请女巫睁眼',toUserName=groupchatmain)
-    wait='nvwu'
-    itchat.send_msg('昨天晚上%s被杀，请输入id号，然后输入救/不救',toUserName=user[nvwu])
+    if int(nvwu) in dead:
+        time.sleep(10)
+        itchat.send_msg('您已死，不能发言，将在10秒后跳过',toUserName=user[nvwu])
+    else:
+        wait='nvwu'
+        itchat.send_msg('昨天晚上%s被杀，请输入id号，然后输入救/不救',toUserName=user[nvwu])
 def nvwugoon():
     itchat.send_msg('女巫发言完毕，请女巫闭眼',toUserName=groupchatmain)
     itchat.send_msg('请预言家睁眼',toUserName=groupchatmain)
-    wait='yuyanjia'
-    itchat.send_msg('请输入您想查询的id号',toUserName=user[yuyanjia])
+    if int(yuyanjia) in dead:
+        time.sleep(10)
+        itchat.send_msg('您已死，不能发言',toUserName=user[yuyanjia])
+    else:
+        wait='yuyanjia'
+        itchat.send_msg('请输入您想查询的id号',toUserName=user[yuyanjia])
 def yuyanjiagoon():
     wait=''
     itchat.send_msg('预言家发言完毕，天亮了，请睁眼。',toUserName=groupchatmain)
@@ -348,6 +375,7 @@ def yuyanjiagoon():
         wait='toupiao'
         time.sleep(60)
         wait=''
+        toupiaoed=[]
         x=get_mode(toupiao)
         if x==None:
             itchat.send_msg('没有相同的投票，投票无效，进入下一轮',toUserName=groupchatmain)
@@ -358,7 +386,22 @@ def yuyanjiagoon():
         elif len(x)==1:
             itchat.send_msg('%s被杀死'%x[0],toUserName=groupchatmain)
             dead.append(x[0])
-        mainloop()
+    dlr=0
+    for lr in langren:
+        if lr in dead:
+            dlr=dlr+1
+    if dlr==len(langren):
+        ending('村民')
+    for cm in cunmin:
+        if cm in dead:
+            dcm=dcm+1
+    if nvwu in dead:
+        dcm=dcm+1
+    if yuyanjia in dead:
+        dcm=dcm+1
+    if dcm==len(cunmin)+2:
+        ending('狼人')
+    mainloop()
 def get_mode(arr):  
     mode = [];  
     arr_appear = dict((a, arr.count(a)) for a in arr);  # 统计各个元素出现的次数  
