@@ -19,8 +19,8 @@ IsAlive = []
 WillKilled = []
 Tacket = []
 chatroomUserClass = ""
-totalNum = 7
-
+totalNum = 6
+hasTouPiao = []
 nowGameStatus = 0
 
 @bot.register()
@@ -30,7 +30,7 @@ def print_messages(msg):
     global WillKilled
     if msg.text == "加入游戏" :
         if not gameStart:
-            if msg.sneder in Player:
+            if msg.sender in Player:
                 return "请不要重复加入"
             else:
                 Player.append(msg.sender)
@@ -72,7 +72,7 @@ def print_messages(msg):
         if nowGameStatus == 2:
             if msg.sender == Witch and IsAlive[Player.index(msg.sender)]:
                 if len(chatRoomUserClass.search(msg.text)) != 0:
-                    if (chatroomUserClass.search(msg.text[1:])[0] not in WillKilled):
+                    if chatroomUserClass.search(msg.text[1:])[0] not in WillKilled:
                         WillKilled.append(chatroomUserClass.search(msg.text[2:])[0])
                     nowGameStatus = 3
                     return "好的我知道了"
@@ -87,13 +87,13 @@ def print_messages(msg):
         if nowGameStatus == 3:
             if msg.sender == Predictor and IsAlive[Player.index(msg.sender)]:
                 if len(chatroomUserClass.serach(msg.text[4:])) != 0:
-                    if (chatroomUserClass.serach(msg.text[4:])[0] in Wolf):
+                    if chatroomUserClass.serach(msg.text[4:])[0] in Wolf:
                         return "没错，她（他）是狼人"
-                    elif (chatroomUserClass.serach(msg.text[4:])[0] == Witch):
+                    elif chatroomUserClass.serach(msg.text[4:])[0] == Witch:
                         return "她（他）是女巫"
-                    elif (chatroomUserClass,serach(msg.text[4:])[0] == Predictor):
+                    elif chatroomUserClass,serach(msg.text[4:])[0] == Predictor:
                         return "她（他）是你自己 = ="
-                    elif (chatroomUserClass.serach(msg.text[4:])[0] in Villager):
+                    elif chatroomUserClass.serach(msg.text[4:])[0] in Villager:
                         return "她（他）是村民"
                     nowGameStatus = 4
                 else:
@@ -110,7 +110,9 @@ def qunneifayan(msg):
         WillKilled.remove(msg.sender)
         IsAlive[Player.index(msg.sender)] = False
     elif nowGameStatus == 4:
-        print("do something.....")
+        if msg.text[:2] == "投票":
+            if len(chatroomUserClass.serach(msg.text[3:]))!=0:
+                Tacket[Player.index(chatroomUserClass.serach(msg.text[3:])[0]) = Tacket[Player.index(chatroomUserClass.serach(msg.text[3:])[0]) + 1
 
 
                     
