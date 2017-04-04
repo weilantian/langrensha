@@ -53,7 +53,7 @@ def print_messages(msg):
         else:
             return "当前不是狼人的发言时间。"
 
-    elif msg.text[:1] == "救":
+    elif msg.text[0] == "救":
         if nowGameStatus == 2:
             if msg.sender == Witch and IsAlive[Player.index(msg.sender)]:
                 if len(chatroomUserClass.search(msg.text)) != 0:
@@ -68,7 +68,7 @@ def print_messages(msg):
         else :
             return "现在不是女巫发言。"
 
-    elif msg.text[:1] == "毒":
+    elif msg.text[0] == "毒":
         if nowGameStatus == 2:
             if msg.sender == Witch and IsAlive[Player.index(msg.sender)]:
                 if len(chatRoomUserClass.search(msg.text)) != 0:
@@ -110,7 +110,7 @@ def qunneifayan(msg):
         WillKilled.remove(msg.sender)
         IsAlive[Player.index(msg.sender)] = False
     elif nowGameStatus == 4:
-        if msg.text[:2] == "投票":
+        if msg.text[:1] == "投票":
             if len(chatroomUserClass.serach(msg.text[3:]))!=0:
                 Tacket[Player.index(chatroomUserClass.serach(msg.text[3:])[0])] = Tacket[Player.index(chatroomUserClass.serach(msg.text[3:])[0])] + 1
 
