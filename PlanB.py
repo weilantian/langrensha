@@ -114,9 +114,9 @@ def text_reply(msg):
         print (weuser)
         print (user)
         print(msg['Content'])
-        if user.get(msg['Content'],-1)==-1:
+        if int(msg['Content']) in user==False:
             itchat.send_msg('对方不存在。',toUserName=msg['FromUserName'])
-        elif msg['Content'] in dead:
+        elif int(msg['Content']) in dead:
             itchat.send_msg('对方已死，请重新选择',toUserName=msg['FromUserName'])
         elif wait!='langren':
             itchat.send_msg('您现在不能杀人。',toUserName=msg['FromUserName'])
@@ -146,18 +146,18 @@ def text_reply(msg):
                     wait=''
                     save=msg['Content']
                 nvwugoon()
-        if user.get(msg['Content'],-1)==-1:
-            itchat.send_msg('对方不存在。',toUserName=msg['FromUserName'])
-        elif wait!='nvwu':
-            itchat.send_msg('您现在不能杀人或救人。',toUserName=msg['FromUserName'])
-        elif msg['Content'] in dead:
-            itchat.send_msg('对方已死，请选择救/不救',toUserName=msg['FromUserName'])
-            nvwuwait=msg['Content']
+            if int(msg['Content']) in user==False:
+                itchat.send_msg('对方不存在。',toUserName=msg['FromUserName'])
+            elif wait!='nvwu':
+                itchat.send_msg('您现在不能杀人或救人。',toUserName=msg['FromUserName'])
+            elif int(msg['Content']) in dead:
+                itchat.send_msg('对方已死，请选择救/不救',toUserName=msg['FromUserName'])
+                nvwuwait=msg['Content']
         #女巫发来的消息，作消息处理
     elif role[weuser[msg['FromUserName']]]=='yuyanjia':
         print('Yuyanjia says:%s'%msg['Content'])
         if wait=='yuyanjia':
-            if user.get(msg['Content'],-1)==-1:
+            if int(msg['Content']) in user ==False:
                 itchat.send_msg('id不存在，请重新输入',toUserName=msg['FromUserName'])
                 return
             itchat.send_msg('%s'%role[msg['Content']])
@@ -290,7 +290,7 @@ def mainloop():
         itchat.send_msg(str(x)+'是'+friendnc[x],toUserName=groupchatlangren)
     itchat.send_msg('天黑请闭眼，狼人请睁眼',toUserName=groupchatmain)
     itchat.send_msg('请讨论，选出想杀的人，派一个代表私聊回复id号',toUserName=groupchatlangren)
-    wait=langren
+    wait='langren'
 def ending(winner):
     global user
     global weuser
@@ -328,12 +328,15 @@ def ending(winner):
     #各种结果公布+倒计时踢人
 def goon():
     itchat.send_msg('狼人发言完毕，请狼人闭眼，请女巫睁眼',toUserName=groupchatmain)
+    wait='nvwu'
     itchat.send_msg('昨天晚上%s被杀，请输入id号，然后输入救/不救',toUserName=user[nvwu])
 def nvwugoon():
     itchat.send_msg('女巫发言完毕，请女巫闭眼',toUserName=groupchatmain)
     itchat.send_msg('请预言家睁眼',toUserName=groupchatmain)
+    wait='yuyanjia'
     itchat.send_msg('请输入您想查询的id号',toUserName=user[yuyanjia])
 def yuyanjiagoon():
+    wait=''
     itchat.send_msg('预言家发言完毕，天亮了，请睁眼。',toUserName=groupchatmain)
     if save=='':
         save='没有人'
