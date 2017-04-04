@@ -23,11 +23,17 @@ totalNum = 6
 hasTouPiao = []
 nowGameStatus = 0
 
+d = 0
+l = 0
+
 @bot.register()
 def print_messages(msg):
     global Player
     global gameStart
     global WillKilled
+    global hasTouPiao
+    global d
+    global l
     if msg.text == "加入游戏" :
         if not gameStart:
             if msg.sender in Player:
@@ -105,14 +111,30 @@ def print_messages(msg):
 
 @bot.register(Group, TEXT)
 def qunneifayan(msg):
+    global hasTouPiao,WillKilled,chatroomUserClass
     if msg.sender in WillKilled:
         msg.reply("好的，谢谢你的观点。")
         WillKilled.remove(msg.sender)
         IsAlive[Player.index(msg.sender)] = False
     elif nowGameStatus == 4:
         if msg.text[:1] == "投票":
-            if len(chatroomUserClass.serach(msg.text[3:]))!=0:
-                Tacket[Player.index(chatroomUserClass.serach(msg.text[3:])[0])] = Tacket[Player.index(chatroomUserClass.serach(msg.text[3:])[0])] + 1
+            if not hasTouPiao[Player.index(chatroomUserClass.serach(msg.sender))]:
+                if len(chatroomUserClass.serach(msg.text[3:]))!=0:
+                  Tacket[Player.index(chatroomUserClass.serach(msg.text[3:])[0])] = Tacket[Player.index(chatroomUserClass.serach(msg.text[3:])[0])] + 1
+                  hasTouPiao[Player.index(chatroomUserClass.serach(msg.sender))] = True
+            else:
+                return "@"+msg.sender.remark_name+"，您已经完成了投票"
+    elif nowGameStatus == 6:
+        if msg.text == "活":
+            l = l +1
+            return "活 +1"
+        if msg.text == "死":
+            d = d +1
+            return "死 +1"
+        else:
+            return "无效的命令。"
+
+
 
 
                     
@@ -156,7 +178,7 @@ def role_distribution():
             Scheduled.append(Villager)
             chatroomUserClass = bot.create_group(player,"狼人杀Beta")
             chatroomUserClass.send_msg("所有的身份已经发放完毕，如有出现没有收到身份等异常翻车情况，请及时私聊，如没毛病，5秒钟后将进入游戏")
-            time.sleep(5000)
+            time.sleep(5)
             
             for i in range(0,len(Player)-1):
                 IsAlive[i] = True
@@ -182,21 +204,68 @@ def main_loop():
             chatroomUserClass.send_msg("好的，那么女巫完成了本轮发言，接着，请预言家睁眼，请问你想知道谁的身份？（对我私聊我想知道+昵称）")
             while nowGameStatus == 3:
                 wait = True
-
-        chatroomUserClass.send_msg("天亮了，昨晚")
-        for willkilled in WillKilled:
-            chatroomUserClass.send_msg(willkilled.remark_name)
-        chatroomUserClass.send_msg("被杀，请留遗言。")
+        if len(WillKilled) != 0:
+            chatroomUserClass.send_msg("天亮了，昨晚")
+            for willkilled in WillKilled:
+              chatroomUserClass.send_msg(willkilled.remark_name)
+            chatroomUserClass.send_msg("被杀，请留遗言。")
         
-        for willkilled in WillKilled:
+           for willkilled in WillKilled:
             chatroomUserClass.sned_msg("下面，请"+willkilled.remark_name+"做出表态。")
             while willkilled in WillKilled:
                 wait = True
                 # 直到发言之后。。。
 
-        chatroomUserClass.send_msg("下面，是最激动人心的投票观点，请给位发送投票+昵称的方式投票。")
+        chatroomUserClass.send_msg("下面，请大家60秒内投票（发送投票+玩家昵称），死者请勿参与。")
         nowGameStatus = 4
+        time.sleep(60)
+        nowGameStatus = 5
+        chatroomUserClass.send_msg("时间到，系统正在统计票数。。。")
         
+        biggestNum = []
+
+        maxNum = 0
+
+        for tacket in Tacket:
+            if tacket > maxNum:
+                maxNum = tacket
+                biggestNum[0] = Tacket.index(tacket)
+            elif tacket == maxNum:
+                biggestNum.append(Tacket.index(tacket))
+        
+        if len(biggestNum) == 1:
+            maxTacketRole = ""
+            if Player[biggestNum[0]] in Wolf:
+                maxTacketRole = "狼人"
+            elif Player[biggestNum[0]] == Witch:
+                maxTacketRole = "女巫"
+            elif Player[biggestNum[0]] == Predictor:
+                maxTacketRole = "预言家"
+            else:
+                maxTacketRole = "村民"
+            chatroomUserClass.send("票数最多的是"+Player[biggestNum[0]].remark_name)
+        else:
+            maxTacketRole = []
+            chatroomUserClass.send("投票结果为：")
+            for biggestnum in biggestNum:
+                chatroomUserClass.send(Player[biggestnum].remark_name+" ")
+            chatroomUserClass.send("票数一致，因为开发者太懒了，所以将随机选择一位。")
+            rec = random.choice(biggestNum)
+            chatroomUserClass.send("最后的结果为"+ Player[rec].remark_name +"，请大家投票决定是否杀掉他（她。）")
+            biggestNum[0] = rec
+        chatroomUserClass.send_msg("请大家在60秒内直接发送死／活到讨论组中")
+        nowGameStatus = 6
+        time.sleep(60)
+        nowGameStatus = 7
+        if l > d:
+            chatroomUserClass.send("更多的玩家选择了活，恭喜你活下来了朋友。")
+        if d > l:
+            chatroomUserClass.send("更多玩家认为你的身份有问题，你即将被处死。")
+            time.sleep(1000)
+
+
+                
+
 
         
         
