@@ -34,7 +34,7 @@ def print_messages(msg):
                 return "请不要重复加入"
             else:
                 Player.append(msg.sender)
-                msg.sender.send_msg("欢迎加入游戏，您再游戏中的id为",str(Player.index(msg.sender)),"，加入游戏后不得退出游戏。")
+                msg.sender.send_msg("欢迎加入游戏，您再游戏中的id为"+str(Player.index(msg.sender))+"，加入游戏后不得退出游戏。")
                 if len(Player) >= totalNum:
                     role_distribution()
                     # 开始游戏咯～
@@ -91,7 +91,7 @@ def print_messages(msg):
                         return "没错，她（他）是狼人"
                     elif chatroomUserClass.serach(msg.text[4:])[0] == Witch:
                         return "她（他）是女巫"
-                    elif chatroomUserClass,serach(msg.text[4:])[0] == Predictor:
+                    elif chatroomUserClass.serach(msg.text[4:])[0] == Predictor:
                         return "她（他）是你自己 = ="
                     elif chatroomUserClass.serach(msg.text[4:])[0] in Villager:
                         return "她（他）是村民"
@@ -112,7 +112,7 @@ def qunneifayan(msg):
     elif nowGameStatus == 4:
         if msg.text[:2] == "投票":
             if len(chatroomUserClass.serach(msg.text[3:]))!=0:
-                Tacket[Player.index(chatroomUserClass.serach(msg.text[3:])[0]) = Tacket[Player.index(chatroomUserClass.serach(msg.text[3:])[0]) + 1
+                Tacket[Player.index(chatroomUserClass.serach(msg.text[3:])[0])] = Tacket[Player.index(chatroomUserClass.serach(msg.text[3:])[0])] + 1
 
 
                     
