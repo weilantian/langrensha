@@ -38,8 +38,8 @@ x=0
 die=''
 yuyanjia=''
 roles=['langren','nvwu','yuyanjia','cunmin']
-langrenamout=3
-cunminamout=3
+langrenamout=2
+cunminamout=2
 friendnc={}
 itchat.auto_login(hotReload=True)
 @itchat.msg_register([TEXT])
@@ -61,7 +61,6 @@ def text_reply(msg):
     global toupiao
     if msg['Content']=='开始游戏':
         if ifgame==False:
-
             if not weuser.get(msg['FromUserName'],-1)==-1:
                 itchat.send_msg('请勿重复加入。',toUserName=msg['FromUserName'])
             else:
@@ -120,15 +119,17 @@ def text_reply(msg):
         print (weuser)
         print (user)
         print(msg['Content'])
-        if int(msg[weuser['FromUserName']]) in dead:
-            itchat.send_msg('您已死，不能发言和杀人',toUserName=msg['FromUserName'])
+        #Problem
+       # if int(msg[weuser[msg['FromUserName']]]) in dead:
+        #    itchat.send_msg('您已死，不能发言和杀人',toUserName=msg['FromUserName'])
+         #   return
+        if wait!='langren':
+            itchat.send_msg('您现在不能杀人。',toUserName=msg['FromUserName'])
             return
         if int(msg['Content']) in user==False:
             itchat.send_msg('对方不存在。',toUserName=msg['FromUserName'])
         elif int(msg['Content']) in dead:
             itchat.send_msg('对方已死，请重新选择',toUserName=msg['FromUserName'])
-        elif wait!='langren':
-            itchat.send_msg('您现在不能杀人。',toUserName=msg['FromUserName'])
         else:
             dead.append(msg['Content'])
             die=msg['Content']
@@ -145,7 +146,7 @@ def text_reply(msg):
                             dead.pop(k)
                             break
                     itchat.send_msg('操作成功',toUserName=msg['FromUserName'])
-                    if msg['Content']==die:
+                    if nvwuwait==die:
                         die=''
                     nvwuwait=''
                     wait=''
@@ -153,11 +154,11 @@ def text_reply(msg):
                     itchat.send_msg('操作成功',toUserName=msg['FromUserName'])
                     nvwuwait=''
                     wait=''
-                    save=msg['Content']
+                    save=nvwuwait
                 nvwugoon()
-            if int(weuser[msg['FromUserName']]) in dead:
-                itchat.send_msg('您已死，不能发言和杀人和救人',toUserName=msg['FromUserName'])
-            return
+         #   if int(weuser[msg['FromUserName']]) in dead:
+           #     itchat.send_msg('您已死，不能发言和杀人和救人',toUserName=msg['FromUserName'])
+          #  return
             if int(msg['Content']) in user==False:
                 itchat.send_msg('对方不存在。',toUserName=msg['FromUserName'])
             elif wait!='nvwu':
@@ -170,9 +171,9 @@ def text_reply(msg):
         #女巫发来的消息，作消息处理
     elif role[weuser[msg['FromUserName']]]=='yuyanjia':
         print('Yuyanjia says:%s'%msg['Content'])
-        if int(weuser[msg['FromUserName']]) in dead:
-            itchat.send_msg('您已死，不能查询.',toUserName=msg['FromUserName'])
-            return
+     #   if int(weuser[msg['FromUserName']]) in dead:
+       #     itchat.send_msg('您已死，不能查询.',toUserName=msg['FromUserName'])
+     #       return
         if wait=='yuyanjia':
             if int(msg['Content']) in user ==False:
                 itchat.send_msg('id不存在，请重新输入',toUserName=msg['FromUserName'])
@@ -371,9 +372,9 @@ def yuyanjiagoon():
         die='没有人'
     itchat.send_msg('昨天%s被杀死，%s被救'%die,save)
     if save!='没有人':
-        itchat.send_msg('您有60秒的时间讨论并私聊投票，已死者不能参与。',toUserName=groupchatmain)
+        itchat.send_msg('您有180秒的时间讨论并私聊投票，已死者不能参与。',toUserName=groupchatmain)
         wait='toupiao'
-        time.sleep(60)
+        time.sleep(180)
         wait=''
         toupiaoed=[]
         x=get_mode(toupiao)
