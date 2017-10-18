@@ -70,6 +70,10 @@ def Calculation():
 def Gameover():
     #判断
     return False
+def Toupiao():
+    #遗言 投票
+    #自动统计并宣布谁出局
+    return
 def mainloop():
     wx.send2group('天黑请闭眼!')
     time.sleep(0.5)
@@ -108,7 +112,9 @@ def mainloop():
         time.sleep(1)
     wx.send2group('天亮了')
     if Gameover()==False:
-        mainloop()
+        Toupiao()
+        if Gameover==False:
+            mainloop()
     else:
         #结束统计
         Calculation()
