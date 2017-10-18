@@ -2,7 +2,9 @@
 Langrenx=[]#狼人列表
 Nvwux=[]#女巫列表
 Yuyanjiax=[]#预言家列表
-Pingminx=[]#平民
+Shouweix=[]#守卫列表
+Pingminx=[]#平民列表
+Protected=''
 Alive=True
 Dead=False
 Players={}
@@ -31,6 +33,12 @@ class Langren:
             Langrenx.append(name)
             return True
     def kill(name):
+        Proved=False
+        for x in Shouwei:
+            if Players[x]==Alive:
+                Proved=True
+        if Proved==True and name==Protected:
+            return '他/她被守护'
         if Players[name]==Alive:
                 Players[name]==Dead
                 return True
@@ -74,7 +82,7 @@ class Nvwu:
                 GetError.Error='写入时出错:玩家还是活的,不需要救'
                 GetError.IDto=GetError.IDto+1
                 return False
-class Yuuyanjia:
+class Yuyanjia:
     '预言家'
     def delete(name):
         if name in Yuyanjiax:
@@ -94,6 +102,32 @@ class Yuuyanjia:
             return True
     def know(name):
         return All.job(name)
+class Shouwei:
+    def delete(name):
+        if name in Shouweix:
+            Shouweix.remove(name)
+            return True
+        else:
+            GetError.Error='删除时出错:名称不存在'
+            GetError.IDto=GetError.IDto+1
+            return False
+    def new(name):
+        if name in Shouweix:
+            GetError.Error='创建时出错:名称已存在'
+            GetError.IDto=GetError.IDto+1
+            return False
+        else:
+            Shouweix.append(name)
+            return True
+    def protect(name):
+        if name in Players:
+            if name != Protected and Players[name]==Alive:
+                Protected=name
+                return True
+            else:
+                GetError.Error='在尝试保护的时候出错:玩家不存在或已在上一论保护过'
+                GetError.IDto=GetError.IDto+1
+                return False
 class Pingmin:
     '平民,无权限'
     def delete(name):
