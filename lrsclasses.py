@@ -19,6 +19,7 @@ class Langren:
     def delete(name):
         if name in Langrenx:
             Langrenx.remove(name)
+            del(Players[name])
             return True
         else:
             GetError.Error='删除时出错:名称不存在'
@@ -31,6 +32,7 @@ class Langren:
             return False
         else:
             Langrenx.append(name)
+            Players[name]=True
             return True
     def kill(name):
         Proved=False
@@ -53,6 +55,7 @@ class Nvwu:
     def delete(name):
         if name in Nvwux:
             Nvwux.remove(name)
+            del(Players[name])
             return True
         else:
             GetError.Error='删除时出错:名称不存在'
@@ -65,6 +68,7 @@ class Nvwu:
             return False
         else:
             Nvwux.append(name)
+            Players[name]=True
             return True
     def kill(name):
         #什么都没干
@@ -87,6 +91,7 @@ class Yuyanjia:
     def delete(name):
         if name in Yuyanjiax:
             Yuyanjiax.remove(name)
+            del(Players[name])
             return True
         else:
             GetError.Error='删除时出错:名称不存在'
@@ -99,6 +104,7 @@ class Yuyanjia:
             return False
         else:
             Yuyanjiax.append(name)
+            Players[name]=True
             return True
     def know(name):
         return All.job(name)
@@ -106,6 +112,7 @@ class Shouwei:
     def delete(name):
         if name in Shouweix:
             Shouweix.remove(name)
+            del(Players[name])
             return True
         else:
             GetError.Error='删除时出错:名称不存在'
@@ -118,6 +125,7 @@ class Shouwei:
             return False
         else:
             Shouweix.append(name)
+            Players[name]=True
             return True
     def protect(name):
         if name in Players:
@@ -133,6 +141,7 @@ class Pingmin:
     def delete(name):
         if name in Pingminx:
             Pingminx.remove(name)
+            del(Players[name])
             return True
         else:
             GetError.Error='删除时出错:名称不存在'
@@ -145,6 +154,7 @@ class Pingmin:
             return False
         else:
             Pingminx.append(name)
+            Players[name]=True
             return True
 class All:
     '全体玩家控制'
