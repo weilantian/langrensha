@@ -40,14 +40,16 @@ class Langren:
             if Players[x]==Alive:
                 Proved=True
         if Proved==True and name==Protected:
-            return '他/她被守护'
+            GetError.Error='守护'
+            GetError.IDto=GetError.IDto+1
+            return '守护'
         if Players[name]==Alive:
                 Players[name]==Dead
                 return True
         else:
             GetError.Error='尝试写入时出错:目标玩家已死'
             GetError.IDto=GetError.IDto+1
-            return False    
+            return False
 class Nvwu:
     '女巫'
     global Nvwux
@@ -133,7 +135,7 @@ class Shouwei:
                 Protected=name
                 return True
             else:
-                GetError.Error='在尝试保护的时候出错:玩家不存在或已在上一论保护过'
+                GetError.Error='在尝试保护的时候出错:玩家不存在或已在上一轮保护过'
                 GetError.IDto=GetError.IDto+1
                 return False
 class Pingmin:
