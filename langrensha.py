@@ -1,6 +1,7 @@
 #导入资源
 from lrsclasses import *
 from wxfunctions import *
+from collections import Counter
 import random
 import time
 #创建变量
@@ -13,6 +14,8 @@ Shouwei.number=1
 Pingmin.number=3
 Game=[]
 Table={}
+Result=[]
+Done=[]
 #临时参数
 dengdailangren=False
 dengdaishouwei=False
@@ -64,13 +67,62 @@ def startgame():
         LangrenGroupup.append(x)
     wx.langrengroup(LangrenGroupup)
     mainloop()
-def Calculation():
+def Calculation(x=None):
+    if x=='Langren':
+        wx.send2group('游戏结束,狼人胜利')
     #结束的统计
-    print('游戏结束,暂无统计')
+    #print('游戏结束,暂无统计')
 def Gameover():
+    Proved=False
+    for x in Langrenx:
+        if All.alive(x)==True:
+            Proved=True
+    if not Proved:
+        return 'Cunmin'
+    Proved=False
+    for x in Cunminx:
+        if All.alive(x)==True:
+            Proved=True
+    for x in Nvwux:
+        if All.alive(x)==True:
+            Proved=True
+    for x in Yuyanjiax:
+        if All.alive(x)==True:
+            Proved=True
+    for x in Shouweix:
+        if All.alive(x)==True:
+            Proved=True
+    if not Proved:
+        return 'Langren'
     #判断
     return False
 def Toupiao():
+    global Result
+    global dengdaitoupiao
+    global Done
+    Result=[]
+    Done=[]
+    if Killed=='没有人':
+        wx.send2group('请私聊投票(数字)')
+    else:
+        wx.send2group('请死者说遗言,请私聊投票(数字)')
+    Table={}
+    y=0
+    TableStr='请选择对象:'
+    for x in Game:
+        if All.alive(x)==Alive:
+            y=y+1
+            Table[y]=x
+            TableStr=TableStr+'\n'+str(y)+':'+x
+    wx.send2group(TableStr)
+    dengdaitoupiao=True
+    while dengdaitoupiao:
+        time.sleep(1)
+    print(Result)
+    x=Counter(Result)
+    y=sorted(x)
+    Langren.kill(y[0])
+    wx.send2group(y[0]+'被投票出局')
     #遗言 投票
     #自动统计并宣布谁出局
     return
@@ -79,6 +131,7 @@ def mainloop():
     global dengdailangren
     global dengdainvwu
     global dengdaiyuyanjia
+    Table={}
     wx.send2group('天黑请闭眼!')
     time.sleep(0.5)
     wx.send2group('守卫请睁眼')
@@ -137,14 +190,18 @@ def mainloop():
     dengdaiyuyanjia=True
     while dengdaiyuyanjia:
         time.sleep(1)
-    wx.send2group('天亮了')
+    if Killed=='':
+        Killed='没有人'
+    wx.send2group('天亮了,昨天'+Killed+'被杀')
     if Gameover()==False:
         Toupiao()
         if Gameover()==False:
             mainloop()
+        else:
+            Calculation(Gameover())
     else:
         #结束统计
-        Calculation()
+        Calculation(Gameover())
 #等待消息(Itchat部分)
 @itchat.msg_register(TEXT)
 def recv(msg):
@@ -154,6 +211,19 @@ def recv(msg):
     global dengdaiyuyanjia
     global Waiting
     global Game
+    global dengdaitoupiao
+    global Result
+    global Done
+    if dengdaitoupiao==True:
+        if msg['User']['NickName'] in Game:
+            if All.alive(msg['User']['NickName'])==True and msg['User']['NickName'] not in Done:
+                if msg['Content'] in Table:
+                    Result.append(Table[msg['Content']])
+                    Done.append(msg['User']['NickName'])
+                else:
+                    wx.sendmsg('选项不存在,请重新选择',msg['User']['NickName'])
+            else:
+                wx.sendmsg('您已死或已参与投票,无法投票',msg['User']['NickName'])
     if dengdailangren==True:
         StillAlive=False
         for x in Langrenx:
@@ -163,7 +233,7 @@ def recv(msg):
             x=list(range(10))
             x.pop(0)
             time.sleep(random.choice(x))
-            dengdailangren=False
+            Calculation('Langren')
         if msg['User']['NickName'] in Game:
             if All.job(msg['User']['NickName'])=='狼人' and All.alive(msg['User']['NickName'])==Alive:
                 if msg['Content'] in Table:
@@ -197,6 +267,7 @@ def recv(msg):
                     wx.sendmsg('无法操作,您的机会已用完.请输入2',msg['User']['NickName'])
             elif msg['Content']=='2' or msg['Content']=='不救':
                 Nvwu.kill(Killed)
+                Killed=''
             wx.sendmsg('操作完成',msg['User']['NickName'])
         else:
             wx.sendmsg('不能操作:您不是女巫或您已死',msg['User']['NickName'])
