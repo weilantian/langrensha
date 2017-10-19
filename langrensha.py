@@ -25,42 +25,42 @@ wx.login()
 def startgame():
     temp=[]
     for x in range(Langren.number):
-        x.append('狼人')
+        temp.append('狼人')
     for x in range(Nvwu.number):
-        x.append('女巫')
+        temp.append('女巫')
     for x in range(Yuyanjia.number):
-        x.append('预言家')
+        temp.append('预言家')
     for x in range(Pingmin.number):
-        x.append('平民')
+        temp.append('平民')
     for x in range(Shouwei.number):
-        x.append('守卫')
-    x=random.choices(x,k=len(x))
+        temp.append('守卫')
+    temp=random.choices(temp,k=len(temp))
     for y in range(len(Game)):
-        if x[y]=='狼人':
-            Langren.new(Game[x])
-            print(Game[x]+'->狼人')
-            wx.sendmsg('您的身份是狼人,您将在10s内进入狼人专用群',Game[x])
-        elif x[y]=='女巫':
-            Nvwu.new(Game[x])
-            print(Game[x]+'->女巫')
-            wx.sendmsg('您的身份是女巫',Game[x])
-        elif x[y]=='预言家':
-            Yuyanjia.new(Game[x])
-            print(Game[x]+'->预言家')
-            wx.sendmsg('您的身份是预言家',Game[x])
-        elif x[y]=='守卫':
-            Shouwei.new(Game[x])
-            print(Game[x]+'->守卫')
-            wx.sendmsg('您的身份是守卫',Game[x])
-        elif x[y]=='平民':
-            Pingmin.new(Game[x])
-            print(Game[x]+'->平民')
-            wx.sendmsg('您的身份是平民',Game[x])
+        if temp[y]=='狼人':
+            Langren.new(Game[y])
+            print(Game[y]+'->狼人')
+            wx.sendmsg('您的身份是狼人,您将在10s内进入狼人专用群',Game[y])
+        elif temp[y]=='女巫':
+            Nvwu.new(Game[y])
+            print(Game[y]+'->女巫')
+            wx.sendmsg('您的身份是女巫',Game[y])
+        elif temp[y]=='预言家':
+            Yuyanjia.new(Game[y])
+            print(Game[y]+'->预言家')
+            wx.sendmsg('您的身份是预言家',Game[y])
+        elif temp[y]=='守卫':
+            Shouwei.new(Game[y])
+            print(Game[y]+'->守卫')
+            wx.sendmsg('您的身份是守卫',Game[y])
+        elif temp[y]=='平民':
+            Pingmin.new(Game[y])
+            print(Game[y]+'->平民')
+            wx.sendmsg('您的身份是平民',Game[y])
         time.sleep(0.5)
     time.sleep(1)
     LangrenGroupup=[]
     wx.send2group('名称分发完毕!')
-    for x in range(Langrenx):
+    for x in range(len(Langrenx)):
         LangrenGroupup.append(x)
     wx.langrengroup(LangrenGroupup)
     mainloop()
@@ -75,6 +75,10 @@ def Toupiao():
     #自动统计并宣布谁出局
     return
 def mainloop():
+    global dengdaishouwei
+    global dengdailangren
+    global dengdainvwu
+    global dengdaiyuyanjia
     wx.send2group('天黑请闭眼!')
     time.sleep(0.5)
     wx.send2group('守卫请睁眼')
@@ -113,7 +117,7 @@ def mainloop():
     wx.send2group('天亮了')
     if Gameover()==False:
         Toupiao()
-        if Gameover==False:
+        if Gameover()==False:
             mainloop()
     else:
         #结束统计
@@ -139,19 +143,19 @@ def recv(msg):
             else:
                 wx.sendmsg('您无法发送该指令:您不是狼人或您已死',msg['User']['NickName'])
         dengdailangren=False
-    elif dengdainvwu==True:
+    if dengdainvwu==True:
         print('### 女巫')
         #判断 女巫是否活着 如果活着就选 挂了就延迟随机
-        dengdaishouwei=False
-    elif dengdaishouwei==True:
+        dengdainvwu=False
+    if dengdaishouwei==True:
         print('### 守卫')
         #判断 守卫是否活着 如果活着就选 挂了就延迟随机
         dengdaishouwei=False
-    elif dengdaiyuyanjia==True:
+    if dengdaiyuyanjia==True:
         print('### 预言家')
         #判断 预言家是否活着 如果活着就选 挂了就延迟随机
         dengdaiyuyanjia=False
-    elif msg['Content']=='开始游戏':
+    if msg['Content']=='开始游戏':
         #开始游戏
         if msg['User']['NickName'] in Waiting or msg['User']['NickName'] in Game:
             wx.sendmsg('您已在游戏中或在列表中,不能再次开始',msg['User']['NickName'])
