@@ -21,6 +21,7 @@ dengdailangren=False
 dengdaishouwei=False
 dengdainvwu=False
 dengdaiyuyanjia=False
+dengdaitoupiao=False
 #登陆微信(Itchat部分)
 wx.login()
 
@@ -61,15 +62,20 @@ def startgame():
             wx.sendmsg('您的身份是平民',Game[y])
         time.sleep(0.5)
     time.sleep(1)
+    Groupup=[]
+    for x in range(len(Game)):
+        Groupup.append(Name2Wx[Game[x]])
+    wx.group(Groupup)
     LangrenGroupup=[]
     wx.send2group('名称分发完毕!')
     for x in range(len(Langrenx)):
-        LangrenGroupup.append(x)
+        LangrenGroupup.append(Name2Wx[Langrenx[x]])
     wx.langrengroup(LangrenGroupup)
     mainloop()
 def Calculation(x=None):
     if x=='Langren':
         wx.send2group('游戏结束,狼人胜利')
+    return
     #结束的统计
     #print('游戏结束,暂无统计')
 def Gameover():
@@ -329,4 +335,5 @@ def recv(msg):
                 Game=Waiting
                 Waiting=[]
                 startgame()
+        print(Waiting)
 itchat.run()
